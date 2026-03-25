@@ -322,19 +322,22 @@ async function startSolve() {
   clearHighlights();
 
   try {
-    const resp = await fetch('/solve', {
+    const resp = await fetch('/api/solve', {
       method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ board: boardCopy, algorithm: algo }),
       signal: AbortSignal.timeout(5000),
     });
+  
     if (resp.ok) {
       const data = await resp.json();
       applyResult(data.board || data.solution, {steps:0,backtracks:0,cacheHits:0,maxDepth:0,time:0});
       finishSolve(true);
       return;
     }
-  } catch (_) { /* backend not available — run locally */ }
+  } catch (_) {
+    /* backend not available — run locally */
+  }
 
   // Local solve with animation
   await localSolve(boardCopy, algo);
